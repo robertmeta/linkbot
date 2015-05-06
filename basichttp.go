@@ -29,12 +29,12 @@ func handlebasicHTTPInfo(client *gumble.Client, who, url string) {
 		tt := z.Next()
 		switch tt {
 		case html.ErrorToken:
-			postLinkToReddit(title, who, url)
+			postLinkToReddit(client, title, who, url)
 			message := gumble.TextMessage{
 				Channels: []*gumble.Channel{
 					client.Self.Channel,
 				},
-				Message: `Posted "` + title + `" to reddit on behalf of ` + who + `.`,
+				Message: `<b>POSTED</b><br/><center><a href="` + url + `">"` + title + `"</a></center>`,
 			}
 			client.Send(&message)
 			return

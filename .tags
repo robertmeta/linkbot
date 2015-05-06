@@ -1,0 +1,36 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+Example Use	/home/rmelton/go/src/github.com/robertmeta/linkbot/README.md	/^# Example Use$/;"	h
+Linkbot	/home/rmelton/go/src/github.com/robertmeta/linkbot/README.md	/^# Linkbot$/;"	h
+basicHTTPLinkPattern	/home/rmelton/go/src/github.com/robertmeta/linkbot/basichttp.go	/^const basicHTTPLinkPattern = `href="(https?:\/\/.*?)"`$/;"	c
+basicHTTPPattern	/home/rmelton/go/src/github.com/robertmeta/linkbot/basichttp.go	/^var basicHTTPPattern *regexp.Regexp$/;"	v
+basicHTTPTemplate	/home/rmelton/go/src/github.com/robertmeta/linkbot/basichttp.go	/^var basicHTTPTemplate *template.Template$/;"	v
+connectEvent	/home/rmelton/go/src/github.com/robertmeta/linkbot/main.go	/^func connectEvent(e *gumble.ConnectEvent) {$/;"	f
+extraInit	/home/rmelton/go/src/github.com/robertmeta/linkbot/main.go	/^func extraInit(client *gumble.Client) {$/;"	f
+getTitle	/home/rmelton/go/src/github.com/robertmeta/linkbot/main.go	/^func getTitle(url string) string {$/;"	f
+handleImgurLink	/home/rmelton/go/src/github.com/robertmeta/linkbot/imgur.go	/^func handleImgurLink(client *gumble.Client, who, id string) {$/;"	f
+handleYoutubeLink	/home/rmelton/go/src/github.com/robertmeta/linkbot/youtube.go	/^func handleYoutubeLink(client *gumble.Client, who, id string) {$/;"	f
+handlebasicHTTPInfo	/home/rmelton/go/src/github.com/robertmeta/linkbot/basichttp.go	/^func handlebasicHTTPInfo(client *gumble.Client, who, url string) {$/;"	f
+imgurLinkPattern	/home/rmelton/go/src/github.com/robertmeta/linkbot/imgur.go	/^const imgurLinkPattern = `https?:\/\/(?:www|i\\.)?(?:imgur\\.com\/)([[:alnum:]]+)`$/;"	c
+imgurPattern	/home/rmelton/go/src/github.com/robertmeta/linkbot/imgur.go	/^var imgurPattern *regexp.Regexp$/;"	v
+init	/home/rmelton/go/src/github.com/robertmeta/linkbot/main.go	/^func init() {$/;"	f
+main	/home/rmelton/go/src/github.com/robertmeta/linkbot/basichttp.go	/^package main$/;"	p
+main	/home/rmelton/go/src/github.com/robertmeta/linkbot/imgur.go	/^package main$/;"	p
+main	/home/rmelton/go/src/github.com/robertmeta/linkbot/main.go	/^func main() {$/;"	f
+main	/home/rmelton/go/src/github.com/robertmeta/linkbot/main.go	/^package main$/;"	p
+main	/home/rmelton/go/src/github.com/robertmeta/linkbot/reddit.go	/^package main$/;"	p
+main	/home/rmelton/go/src/github.com/robertmeta/linkbot/youtube.go	/^package main$/;"	p
+postLinkToReddit	/home/rmelton/go/src/github.com/robertmeta/linkbot/reddit.go	/^func postLinkToReddit(client *gumble.Client, title, who, link string) {$/;"	f
+redditPassword	/home/rmelton/go/src/github.com/robertmeta/linkbot/main.go	/^var redditPassword string$/;"	v
+redditUser	/home/rmelton/go/src/github.com/robertmeta/linkbot/main.go	/^var redditUser string$/;"	v
+session	/home/rmelton/go/src/github.com/robertmeta/linkbot/reddit.go	/^var session *geddit.LoginSession$/;"	v
+setupSession	/home/rmelton/go/src/github.com/robertmeta/linkbot/reddit.go	/^func setupSession(client *gumble.Client) {$/;"	f
+subreddit	/home/rmelton/go/src/github.com/robertmeta/linkbot/main.go	/^var subreddit string$/;"	v
+textEvent	/home/rmelton/go/src/github.com/robertmeta/linkbot/main.go	/^func textEvent(e *gumble.TextMessageEvent) {$/;"	f
+youtubeLinkPattern	/home/rmelton/go/src/github.com/robertmeta/linkbot/youtube.go	/^const youtubeLinkPattern = `https?:\/\/(?:www\\.)?(?:youtube\\.com\/watch\\?v=|youtu\\.be\/|youtube\\.com\/v\/|youtube\\.com\/v\/)([[:alnum:]_\\-]+)`$/;"	c
+youtubePattern	/home/rmelton/go/src/github.com/robertmeta/linkbot/youtube.go	/^var youtubePattern *regexp.Regexp$/;"	v
+youtubeTemplate	/home/rmelton/go/src/github.com/robertmeta/linkbot/youtube.go	/^var youtubeTemplate *template.Template$/;"	v

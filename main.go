@@ -3,12 +3,13 @@ package main
 import (
 	"flag"
 	"fmt"
-	"html/template"
+	"net/http"
 	"os"
 	"regexp"
 
 	"github.com/layeh/gumble/gumble"
 	"github.com/layeh/gumble/gumbleutil"
+	"golang.org/x/net/html"
 )
 
 var redditUser string
@@ -16,15 +17,10 @@ var redditPassword string
 var subreddit string
 
 func init() {
-	var err error
 	basicHTTPPattern = regexp.MustCompile(basicHTTPLinkPattern)
 	imgurPattern = regexp.MustCompile(imgurLinkPattern)
-
 	youtubePattern = regexp.MustCompile(youtubeLinkPattern)
-	youtubeTemplate, err = template.New("root").Parse(youtubeResponseTemplate)
-	if err != nil {
-		panic(err)
-	}
+
 	flag.StringVar(&redditUser, "reddituser", "", "the reddit user to post as")
 	flag.StringVar(&redditPassword, "redditpassword", "", "the reddit user password")
 	flag.StringVar(&subreddit, "subreddit", "", "the subreddit to post to")
@@ -52,7 +48,7 @@ func textEvent(e *gumble.TextMessageEvent) {
 	}
 
 	imgurMatches := imgurPattern.FindStringSubmatch(e.Message)
-	if len(imgurMatches) == 2 {
+	if len(imgurMatches) == 2 && imgurMatches[1] != "gallery" {
 		go handleImgurLink(e.Client, e.Sender.Name, imgurMatches[1])
 		return
 	}
@@ -70,4 +66,37 @@ func main() {
 		TextMessage: textEvent,
 	}
 	gumbleutil.Main(extraInit, gul)
+}
+
+func getTitle(url string) string {
+	response, err := http.Get(url)
+	if err != nil {
+		fmt.Println("Error while downloading", url, "-", err)
+		return ""
+	}
+	defer response.Body.Close()
+	var titleDepth int
+	var title string
+	z := html.NewTokenizer(response.Body)
+	for {
+		tt := z.Next()
+		switch tt {
+		case html.ErrorToken:
+			return title
+		case html.TextToken:
+			if titleDepth > 0 {
+				title = string(z.Text())
+			}
+		case html.StartTagToken, html.EndTagToken:
+			tn, _ := z.TagName()
+			if string(tn) == "title" {
+				if tt == html.StartTagToken {
+					titleDepth++
+				} else {
+					titleDepth--
+				}
+			}
+		}
+	}
+	return title
 }
