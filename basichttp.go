@@ -5,6 +5,7 @@ import (
 	"html/template"
 	"net/http"
 	"regexp"
+	"strings"
 
 	"github.com/layeh/gumble/gumble"
 	"golang.org/x/net/html"
@@ -30,11 +31,15 @@ func handlebasicHTTPInfo(client *gumble.Client, who, url string) {
 		switch tt {
 		case html.ErrorToken:
 			postLinkToReddit(client, title, who, url)
+			msg := `<b>POSTED</b><br/><center><a href="` + url + `">"` + title + `"</a></center>`
+			if strings.HasSuffix(url, ".jpg") || strings.HasSuffix(url, ".jpeg") || strings.HasSuffix(url, ".png") || strings.HasSuffix(url, ".gif") {
+				msg = `<b>POSTED</b><br/><center><a href="` + url + `"><img width="250" src="` + url + `"></img><br/>` + title + `</center></a>`
+			}
 			message := gumble.TextMessage{
 				Channels: []*gumble.Channel{
 					client.Self.Channel,
 				},
-				Message: `<b>POSTED</b><br/><center><a href="` + url + `">"` + title + `"</a></center>`,
+				Message: msg,
 			}
 			client.Send(&message)
 			return
