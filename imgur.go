@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"regexp"
+	"strings"
 
 	"github.com/layeh/gumble/gumble"
 	"golang.org/x/net/html"
@@ -28,6 +29,9 @@ func handleImgurLink(client *gumble.Client, who, id string) {
 		tt := z.Next()
 		switch tt {
 		case html.ErrorToken:
+			if strings.Trim(title, "\n \t") == "Imgur" {
+				title = ""
+			}
 			postLinkToReddit(title, who, url)
 			message := gumble.TextMessage{
 				Channels: []*gumble.Channel{
