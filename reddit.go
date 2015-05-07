@@ -82,7 +82,6 @@ func setupSession(client *gumble.Client) {
 				Message: `Reddit is overloaded at the moment, giving up on logging in`,
 			}
 			client.Send(&message)
-			return
 		}
 	}
 
