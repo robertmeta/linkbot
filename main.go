@@ -3,9 +3,11 @@ package main
 import (
 	"flag"
 	"fmt"
+	"log"
 	"net/http"
 	"os"
 	"regexp"
+	"strings"
 
 	"github.com/layeh/gumble/gumble"
 	"github.com/layeh/gumble/gumbleutil"
@@ -48,7 +50,8 @@ func textEvent(e *gumble.TextMessageEvent) {
 	}
 
 	imgurMatches := imgurPattern.FindStringSubmatch(e.Message)
-	if len(imgurMatches) == 2 && imgurMatches[1] != "gallery" {
+	if len(imgurMatches) == 2 && imgurMatches[1] != "gallery" && imgurMatches[1] != "a" {
+		log.Println(`"` + imgurMatches[1] + `"`)
 		go handleImgurLink(e.Client, e.Sender.Name, imgurMatches[1])
 		return
 	}
@@ -98,5 +101,5 @@ func getTitle(url string) string {
 			}
 		}
 	}
-	return title
+	return strings.Trim(title, "\n\t ")
 }

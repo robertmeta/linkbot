@@ -20,7 +20,7 @@ func postLinkToReddit(client *gumble.Client, title, who, link string) {
 	if err != nil { // login then
 		setupSession(client)
 	}
-	if strings.TrimSpace(title) == "" || strings.TrimSpace(title) == "Imgur" {
+	if strings.Trim(title, "\n\t ") == "" || strings.Trim(title, "\n\t ") == "Imgur" {
 		t := time.Now().Local()
 		title = who + " posted at " + t.Format(time.RubyDate)
 	} else {

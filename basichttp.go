@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"html/template"
+	"log"
 	"net/http"
 	"regexp"
 	"strings"
@@ -31,9 +32,9 @@ func handlebasicHTTPInfo(client *gumble.Client, who, url string) {
 		switch tt {
 		case html.ErrorToken:
 			postLinkToReddit(client, title, who, url)
-			msg := `<b>POSTED</b><br/><center><a href="` + url + `">"` + title + `"</a></center>`
+			msg := `<b>Link Posted</b><br/><center><a href="` + url + `">"` + title + `"</a></center>`
 			if strings.HasSuffix(url, ".jpg") || strings.HasSuffix(url, ".jpeg") || strings.HasSuffix(url, ".png") || strings.HasSuffix(url, ".gif") {
-				msg = `<b>POSTED</b><br/><center><a href="` + url + `"><img width="250" src="` + url + `"></img><br/>` + title + `</center></a>`
+				msg = `<b>Image Posted</b><br/><center><a href="` + url + `"><img width="250" src="` + url + `"></img></center></a>`
 			}
 			message := gumble.TextMessage{
 				Channels: []*gumble.Channel{
@@ -41,6 +42,7 @@ func handlebasicHTTPInfo(client *gumble.Client, who, url string) {
 				},
 				Message: msg,
 			}
+			log.Println(msg)
 			client.Send(&message)
 			return
 		case html.TextToken:
