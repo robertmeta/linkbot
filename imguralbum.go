@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"regexp"
 	"strings"
 
@@ -24,14 +23,7 @@ func handleImgurAlbumLink(client *gumble.Client, who, id string) {
 		msg += `<br/><img width="250" src="` + imgURL + `"></img>`
 	}
 	msg += `<br/>` + title + `</center></a>`
-	log.Println(msg)
-	message := gumble.TextMessage{
-		Channels: []*gumble.Channel{
-			client.Self.Channel,
-		},
-		Message: msg,
-	}
-	client.Send(&message)
+	sendMsg(client, msg)
 }
 
 func findImages(url string) []string {

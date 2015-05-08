@@ -29,23 +29,11 @@ func postLinkToReddit(client *gumble.Client, title, who, link string) {
 	submission := geddit.NewLinkSubmission(subreddit, title, link, false, &geddit.Captcha{})
 	err = session.Submit(submission)
 	if err != nil && strings.Contains(err.Error(), "503") {
-		message := gumble.TextMessage{
-			Channels: []*gumble.Channel{
-				client.Self.Channel,
-			},
-			Message: who + ` reddit is overloaded at the moment, will retry in a minute.`,
-		}
-		client.Send(&message)
+		sendMsg(client, who+` reddit is overloaded at the moment, will retry in a minute.`)
 		time.Sleep(1 * time.Minute)
 		err = session.Submit(submission)
 		if err != nil {
-			message := gumble.TextMessage{
-				Channels: []*gumble.Channel{
-					client.Self.Channel,
-				},
-				Message: who + ` I give up, stupid broken reddit.`,
-			}
-			client.Send(&message)
+			sendMsg(client, who+` I give up, stupid broken reddit.`)
 			log.Println("FAILED TO POST: ", submission)
 			return
 		}
@@ -61,13 +49,7 @@ func setupSession(client *gumble.Client) {
 		"linkbot v1",
 	)
 	if err != nil {
-		message := gumble.TextMessage{
-			Channels: []*gumble.Channel{
-				client.Self.Channel,
-			},
-			Message: `Reddit is overloaded at the moment, I can't even log in, will try again in a minute.`,
-		}
-		client.Send(&message)
+		sendMsg(client, `Reddit is overloaded at the moment, I can't even log in, will try again in a minute.`)
 		time.Sleep(1 * time.Minute)
 		session, err = geddit.NewLoginSession(
 			redditUser,
@@ -75,21 +57,9 @@ func setupSession(client *gumble.Client) {
 			"linkbot v1",
 		)
 		if err != nil {
-			message := gumble.TextMessage{
-				Channels: []*gumble.Channel{
-					client.Self.Channel,
-				},
-				Message: `Reddit is overloaded at the moment, giving up on logging in`,
-			}
-			client.Send(&message)
+			sendMsg(client, `Reddit is overloaded at the moment, giving up on logging in`)
 		}
 	}
 
-	message := gumble.TextMessage{
-		Channels: []*gumble.Channel{
-			client.Self.Channel,
-		},
-		Message: `Successfully logged into Reddit.`,
-	}
-	client.Send(&message)
+	sendMsg(client, `Successfully logged into Reddit.`)
 }

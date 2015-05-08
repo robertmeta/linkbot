@@ -8,14 +8,16 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/PuerkitoBio/goquery"
 	"github.com/layeh/gumble/gumble"
+	"github.com/layeh/gumble/gumble_ffmpeg"
 	"github.com/layeh/gumble/gumbleutil"
 )
 
 var redditUser string
 var redditPassword string
 var subreddit string
+var streamLoc string
+var stream *gumble_ffmpeg.Stream
 
 func init() {
 	basicHTTPPattern = regexp.MustCompile(basicHTTPLinkPattern)
@@ -29,10 +31,19 @@ func init() {
 }
 
 func extraInit(client *gumble.Client) {
+	var err error
 	if redditUser == "" || redditPassword == "" || subreddit == "" {
 		flag.PrintDefaults()
 		os.Exit(1)
 	}
+
+	stream, err = gumble_ffmpeg.New(client)
+	if err != nil {
+		fmt.Printf("%s\n", err)
+		os.Exit(1)
+	}
+
+	client.Attach(gumbleutil.AutoBitrate)
 }
 
 func connectEvent(e *gumble.ConnectEvent) {
@@ -42,6 +53,12 @@ func connectEvent(e *gumble.ConnectEvent) {
 func textEvent(e *gumble.TextMessageEvent) {
 	if e.Sender == nil {
 		return
+	}
+	if strings.ToLower(e.Message) == "stop" {
+		if stream.IsPlaying() {
+			stream.Stop()
+			os.Remove(streamLoc)
+		}
 	}
 	youtubeMatches := youtubePattern.FindStringSubmatch(e.Message)
 	if len(youtubeMatches) == 2 {
@@ -68,6 +85,7 @@ func textEvent(e *gumble.TextMessageEvent) {
 		go handlebasicHTTPInfo(e.Client, e.Sender.Name, basicHTTPMatches[1])
 		return
 	}
+
 }
 
 func main() {
@@ -76,17 +94,4 @@ func main() {
 		TextMessage: textEvent,
 	}
 	gumbleutil.Main(extraInit, gul)
-}
-
-func getTitle(url string) string {
-	title := ""
-	doc, err := goquery.NewDocument(url)
-	if err != nil {
-		fmt.Println("Error while downloading", url, "-", err)
-		return ""
-	}
-	doc.Find("title").Each(func(i int, s *goquery.Selection) {
-		title = s.Text()
-	})
-	return strings.Trim(title, "\n\t ")
 }
