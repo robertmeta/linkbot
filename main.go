@@ -54,7 +54,6 @@ func connectEvent(e *gumble.ConnectEvent) {
 }
 
 func textEvent(e *gumble.TextMessageEvent) {
-	volume = 0.5
 	nopost = false // race condition, accept for now
 	if e.Sender == nil {
 		return
@@ -66,10 +65,15 @@ func textEvent(e *gumble.TextMessageEvent) {
 		}
 		return
 	}
+	if strings.ToLower(e.Message) == "mute" {
+		if stream.IsPlaying() {
+			stream.Volume = 0.0
+		}
+	}
 	msgParts := strings.Split(e.Message, " ")
 	for _, v := range msgParts {
 		if strings.ToLower(strings.TrimSpace(v)) == "up" {
-			if stream.Volume < 5 {
+			if stream.Volume < 2 {
 				stream.Volume += .1
 			}
 			sendMsg(e.Client, "Volume set to "+strconv.Itoa(int(stream.Volume*100))+"%")

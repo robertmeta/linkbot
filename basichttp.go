@@ -56,7 +56,7 @@ func handlebasicHTTPInfo(client *gumble.Client, who, url string) {
 			stream.Stop()
 			os.Remove(streamLoc)
 		}
-		stream.Volume = 0.5
+		stream.Volume = 0.3
 		os.Rename(location, streamLoc)
 		if err := stream.Play(streamLoc); err != nil {
 			fmt.Printf("%s\n", err)
@@ -68,7 +68,7 @@ func handlebasicHTTPInfo(client *gumble.Client, who, url string) {
 		}()
 
 		fmt.Printf("Playing %s\n", streamLoc)
-		msg = `<b>Playing Song</b><br/><center><a href="` + url + `">` + url + `</center><br/>Type <b>stop</b> to halt song.</a>`
+		msg = `<b>Song (vol: 30%)</b><br/><center><a href="` + url + `">` + url + `</center><br/>Type <b>stop</b> to halt song.</a>`
 	}
 	postLinkToReddit(client, title, kind, who, url)
 	sendMsg(client, msg)
