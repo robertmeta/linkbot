@@ -18,6 +18,7 @@ var redditPassword string
 var subreddit string
 var streamLoc string
 var stream *gumble_ffmpeg.Stream
+var nopost bool
 
 func init() {
 	basicHTTPPattern = regexp.MustCompile(basicHTTPLinkPattern)
@@ -51,6 +52,7 @@ func connectEvent(e *gumble.ConnectEvent) {
 }
 
 func textEvent(e *gumble.TextMessageEvent) {
+	nopost = false // face condition, accept for now
 	if e.Sender == nil {
 		return
 	}
@@ -59,6 +61,10 @@ func textEvent(e *gumble.TextMessageEvent) {
 			stream.Stop()
 			os.Remove(streamLoc)
 		}
+		return
+	}
+	if strings.Contains(strings.ToLower(e.Message), "no post") {
+		nopost = true
 	}
 	youtubeMatches := youtubePattern.FindStringSubmatch(e.Message)
 	if len(youtubeMatches) == 2 {
