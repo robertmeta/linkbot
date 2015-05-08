@@ -22,13 +22,23 @@ func handlebasicHTTPInfo(client *gumble.Client, who, url string) {
 	if strings.HasSuffix(url, ".jpg") || strings.HasSuffix(url, ".jpeg") || strings.HasSuffix(url, ".png") || strings.HasSuffix(url, ".gif") {
 		msg = `<b>Image Posted</b><br/><center><a href="` + url + `"><img width="250" src="` + url + `"></img></center></a>`
 	}
+	playSong := false
+	location := ""
 	if strings.HasSuffix(url, ".ogg") {
+		location = downloadFromUrl(url)
+		streamLoc = location + ".ogg"
+		playSong = true
+	}
+	if strings.HasSuffix(url, ".mp3") {
+		location = downloadFromUrl(url)
+		streamLoc = location + ".mp3"
+		playSong = true
+	}
+	if playSong {
 		if stream.IsPlaying() {
 			stream.Stop()
 			os.Remove(streamLoc)
 		}
-		location := downloadFromUrl(url)
-		streamLoc = location + ".ogg"
 		os.Rename(location, streamLoc)
 		if err := stream.Play(streamLoc); err != nil {
 			fmt.Printf("%s\n", err)
