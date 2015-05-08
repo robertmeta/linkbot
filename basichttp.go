@@ -53,6 +53,11 @@ func handlebasicHTTPInfo(client *gumble.Client, who, url string) {
 			fmt.Printf("%s\n", err)
 			return
 		}
+		go func() {
+			stream.Wait()
+			os.Remove(streamLoc)
+		}()
+
 		fmt.Printf("Playing %s\n", streamLoc)
 		msg = `<b>Playing Song</b><br/><center><a href="` + url + `">` + url + `</center><br/>Type <b>stop</b> to halt song.</a>`
 	}
