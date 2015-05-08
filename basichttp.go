@@ -37,6 +37,12 @@ func handlebasicHTTPInfo(client *gumble.Client, who, url string) {
 		streamLoc = location + ".mp3"
 		playSong = true
 	}
+	if strings.HasSuffix(url, ".m4a") {
+		kind = "m4a"
+		location = downloadFromUrl(url)
+		streamLoc = location + ".m4a"
+		playSong = true
+	}
 	if strings.HasSuffix(url, ".flac") {
 		kind = "flac"
 		location = downloadFromUrl(url)
