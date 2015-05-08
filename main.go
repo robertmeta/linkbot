@@ -4,14 +4,13 @@ import (
 	"flag"
 	"fmt"
 	"log"
-	"net/http"
 	"os"
 	"regexp"
 	"strings"
 
+	"github.com/PuerkitoBio/goquery"
 	"github.com/layeh/gumble/gumble"
 	"github.com/layeh/gumble/gumbleutil"
-	"golang.org/x/net/html"
 )
 
 var redditUser string
@@ -80,34 +79,14 @@ func main() {
 }
 
 func getTitle(url string) string {
-	response, err := http.Get(url)
+	title := ""
+	doc, err := goquery.NewDocument(url)
 	if err != nil {
 		fmt.Println("Error while downloading", url, "-", err)
 		return ""
 	}
-	defer response.Body.Close()
-	var titleDepth int
-	var title string
-	z := html.NewTokenizer(response.Body)
-	for {
-		tt := z.Next()
-		switch tt {
-		case html.ErrorToken:
-			return title
-		case html.TextToken:
-			if titleDepth > 0 {
-				title = string(z.Text())
-			}
-		case html.StartTagToken, html.EndTagToken:
-			tn, _ := z.TagName()
-			if string(tn) == "title" {
-				if tt == html.StartTagToken {
-					titleDepth++
-				} else {
-					titleDepth--
-				}
-			}
-		}
-	}
+	doc.Find("title").Each(func(i int, s *goquery.Selection) {
+		title = s.Text()
+	})
 	return strings.Trim(title, "\n\t ")
 }
