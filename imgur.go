@@ -1,12 +1,8 @@
 package main
 
 import (
-	"fmt"
-	"io/ioutil"
 	"log"
-	"net/http"
 	"regexp"
-	"strings"
 
 	"github.com/layeh/gumble/gumble"
 )
@@ -29,26 +25,4 @@ func handleImgurLink(client *gumble.Client, who, id string) {
 		Message: msg,
 	}
 	client.Send(&message)
-}
-
-func findFirstImage(url string) string {
-	re := regexp.MustCompile(`href="(https?://i\.imgur\.com/.+)"`)
-
-	response, err := http.Get(url)
-	if err != nil {
-		fmt.Println("Error while downloading", url, "-", err)
-		return ""
-	}
-	defer response.Body.Close()
-	bs, err := ioutil.ReadAll(response.Body)
-	if err != nil {
-		fmt.Println("Error while reading", url, "-", err)
-		return ""
-	}
-	imgURL := re.FindString(string(bs))
-	imgURL = strings.Replace(imgURL, `href=`, "", 1)
-	imgURL = strings.Replace(imgURL, `"`, "", 2)
-	imgURL = strings.Replace(imgURL, `\.`, "m.", 1)
-	log.Println(imgURL)
-	return imgURL
 }

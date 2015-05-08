@@ -21,6 +21,7 @@ var subreddit string
 func init() {
 	basicHTTPPattern = regexp.MustCompile(basicHTTPLinkPattern)
 	imgurPattern = regexp.MustCompile(imgurLinkPattern)
+	imgurAlbumPattern = regexp.MustCompile(imgurAlbumLinkPattern)
 	youtubePattern = regexp.MustCompile(youtubeLinkPattern)
 
 	flag.StringVar(&redditUser, "reddituser", "", "the reddit user to post as")
@@ -49,8 +50,15 @@ func textEvent(e *gumble.TextMessageEvent) {
 		return
 	}
 
+	imgurAlbumMatches := imgurAlbumPattern.FindStringSubmatch(e.Message)
+	if len(imgurAlbumMatches) == 2 {
+		log.Println(`"` + imgurAlbumMatches[1] + `"`)
+		go handleImgurAlbumLink(e.Client, e.Sender.Name, imgurAlbumMatches[1])
+		return
+	}
+
 	imgurMatches := imgurPattern.FindStringSubmatch(e.Message)
-	if len(imgurMatches) == 2 && imgurMatches[1] != "gallery" && imgurMatches[1] != "a" {
+	if len(imgurMatches) == 2 {
 		log.Println(`"` + imgurMatches[1] + `"`)
 		go handleImgurLink(e.Client, e.Sender.Name, imgurMatches[1])
 		return
