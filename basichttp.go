@@ -19,31 +19,32 @@ func handlebasicHTTPInfo(client *gumble.Client, who, url string) {
 	title := getTitle(url)
 	kind := "link"
 	msg := `<b>Link Posted</b><br/><center><a href="` + url + `">"` + title + `"</a></center>`
-	if strings.HasSuffix(url, ".jpg") || strings.HasSuffix(url, ".jpeg") || strings.HasSuffix(url, ".png") || strings.HasSuffix(url, ".gif") {
+	lowerURL := strings.ToLower(url)
+	if strings.HasSuffix(lowerURL, ".jpg") || strings.HasSuffix(lowerURL, ".jpeg") || strings.HasSuffix(lowerURL, ".png") || strings.HasSuffix(lowerURL, ".gif") {
 		kind = "image"
 		msg = `<b>Image Posted</b><br/><center><a href="` + url + `"><img width="250" src="` + url + `"></img></center></a>`
 	}
 	playSong := false
 	location := ""
-	if strings.HasSuffix(url, ".ogg") {
+	if strings.HasSuffix(lowerURL, ".ogg") {
 		kind = "ogg"
 		location = downloadFromUrl(url)
 		streamLoc = location + ".ogg"
 		playSong = true
 	}
-	if strings.HasSuffix(url, ".mp3") {
+	if strings.HasSuffix(lowerURL, ".mp3") {
 		kind = "mp3"
 		location = downloadFromUrl(url)
 		streamLoc = location + ".mp3"
 		playSong = true
 	}
-	if strings.HasSuffix(url, ".m4a") {
+	if strings.HasSuffix(lowerURL, ".m4a") {
 		kind = "m4a"
 		location = downloadFromUrl(url)
 		streamLoc = location + ".m4a"
 		playSong = true
 	}
-	if strings.HasSuffix(url, ".flac") {
+	if strings.HasSuffix(lowerURL, ".flac") {
 		kind = "flac"
 		location = downloadFromUrl(url)
 		streamLoc = location + ".flac"
