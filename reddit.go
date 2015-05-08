@@ -11,7 +11,7 @@ import (
 
 var session *geddit.LoginSession
 
-func postLinkToReddit(client *gumble.Client, title, who, link string) {
+func postLinkToReddit(client *gumble.Client, title, kind, who, link string) {
 	if session == nil {
 		setupSession(client)
 	}
@@ -22,11 +22,12 @@ func postLinkToReddit(client *gumble.Client, title, who, link string) {
 	}
 	if strings.Trim(title, "\n\t ") == "" || strings.Trim(title, "\n\t ") == "Imgur" {
 		t := time.Now().Local()
-		title = who + " posted at " + t.Format(time.RubyDate)
+		title = who + " posted a(n) " + kind + " at " + t.Format(time.RubyDate)
 	} else {
-		title = who + " posted: " + strings.TrimSpace(title)
+		title = who + " posted a(n) " + kind + ": " + strings.TrimSpace(title)
 	}
 	submission := geddit.NewLinkSubmission(subreddit, title, link, false, &geddit.Captcha{})
+	submission.Resubmit = false // DIE RESUBMIT
 	err = session.Submit(submission)
 	if err != nil && strings.Contains(err.Error(), "503") {
 		sendMsg(client, who+` reddit is overloaded at the moment, will retry in a minute.`)

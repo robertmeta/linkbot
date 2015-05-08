@@ -14,7 +14,7 @@ func handleImgurLink(client *gumble.Client, who, id string) {
 	linkURL := "http://imgur.com/" + id
 	imgURL := "http://i.imgur.com/" + id + "m.png"
 	title := getTitle(linkURL)
-	postLinkToReddit(client, title, who, linkURL)
+	postLinkToReddit(client, title, "image", who, linkURL)
 	msg := `<b>Imgur Posted</b><br/><center><a href="` + linkURL + `"><img width="250" src="` + imgURL + `"></img><br/>` + title + `</center></a>`
 	sendMsg(client, msg)
 }

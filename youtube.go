@@ -2,7 +2,6 @@ package main
 
 import (
 	"html/template"
-	"log"
 	"regexp"
 
 	"github.com/layeh/gumble/gumble"
@@ -18,12 +17,6 @@ func handleYoutubeLink(client *gumble.Client, who, id string) {
 	linkURL := "https://www.youtube.com/watch?v=" + id
 	title := getTitle(linkURL)
 	msg := `<b>YouTube Posted</b><br/><center><a href="` + linkURL + `"><img width="250" src="` + imgURL + `"></img><br/>` + title + `</center></a>`
-	log.Println(msg)
-	message := gumble.TextMessage{
-		Channels: []*gumble.Channel{
-			client.Self.Channel,
-		},
-		Message: msg,
-	}
-	client.Send(&message)
+	postLinkToReddit(client, title, "youtube video", who, linkURL)
+	sendMsg(client, msg)
 }
