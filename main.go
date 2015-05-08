@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"regexp"
+	"strconv"
 	"strings"
 
 	"github.com/layeh/gumble/gumble"
@@ -19,6 +20,7 @@ var subreddit string
 var streamLoc string
 var stream *gumble_ffmpeg.Stream
 var nopost bool
+var volume float32
 
 func init() {
 	basicHTTPPattern = regexp.MustCompile(basicHTTPLinkPattern)
@@ -52,7 +54,8 @@ func connectEvent(e *gumble.ConnectEvent) {
 }
 
 func textEvent(e *gumble.TextMessageEvent) {
-	nopost = false // face condition, accept for now
+	volume = 0.5
+	nopost = false // race condition, accept for now
 	if e.Sender == nil {
 		return
 	}
@@ -63,9 +66,22 @@ func textEvent(e *gumble.TextMessageEvent) {
 		}
 		return
 	}
-	if strings.Contains(strings.ToLower(e.Message), "no post") {
-		nopost = true
+	msgParts := strings.Split(e.Message, " ")
+	for _, v := range msgParts {
+		if strings.ToLower(strings.TrimSpace(v)) == "up" {
+			if stream.Volume < 5 {
+				stream.Volume += .1
+			}
+			sendMsg(e.Client, "Volume set to "+strconv.Itoa(int(stream.Volume*100))+"%")
+		}
+		if strings.ToLower(strings.TrimSpace(v)) == "down" {
+			if stream.Volume > 0 {
+				stream.Volume -= .1
+			}
+			sendMsg(e.Client, "Volume set to "+strconv.Itoa(int(stream.Volume*100))+"%")
+		}
 	}
+
 	youtubeMatches := youtubePattern.FindStringSubmatch(e.Message)
 	if len(youtubeMatches) == 2 {
 		go handleYoutubeLink(e.Client, e.Sender.Name, youtubeMatches[1])

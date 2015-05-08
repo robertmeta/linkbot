@@ -24,6 +24,7 @@ func handlebasicHTTPInfo(client *gumble.Client, who, url string) {
 		kind = "image"
 		msg = `<b>Image Posted</b><br/><center><a href="` + url + `"><img width="250" src="` + url + `"></img></center></a>`
 	}
+	nopost = true
 	playSong := false
 	location := ""
 	if strings.HasSuffix(lowerURL, ".ogg") {
@@ -55,6 +56,7 @@ func handlebasicHTTPInfo(client *gumble.Client, who, url string) {
 			stream.Stop()
 			os.Remove(streamLoc)
 		}
+		stream.Volume = 0.5
 		os.Rename(location, streamLoc)
 		if err := stream.Play(streamLoc); err != nil {
 			fmt.Printf("%s\n", err)
