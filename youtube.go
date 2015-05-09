@@ -16,7 +16,7 @@ func handleYoutubeLink(client *gumble.Client, who, id string) {
 	imgURL := "https://i.ytimg.com/vi/" + id + "/hqdefault.jpg"
 	linkURL := "https://www.youtube.com/watch?v=" + id
 	title := getTitle(linkURL)
-	msg := `<b>YouTube Posted</b><br/><center><a href="` + linkURL + `"><img width="250" src="` + imgURL + `"></img><br/>` + title + `</center></a>`
+	msg := `<b>YouTube</b><br/><center><a href="` + linkURL + `"><img width="250" src="` + imgURL + `"></img><br/>` + title + `</center></a>`
 	postLinkToReddit(client, title, "youtube video", who, linkURL)
 	sendMsg(client, msg)
 }

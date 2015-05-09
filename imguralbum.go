@@ -17,7 +17,7 @@ func handleImgurAlbumLink(client *gumble.Client, who, id string) {
 	linkURL := "http://imgur.com/gallery/" + id
 	title := getTitle(linkURL)
 	images := findImages(linkURL)
-	msg := `<b>Album Posted</b><br/><center><a href="` + linkURL + `">`
+	msg := `<b>Album</b><br/><center><a href="` + linkURL + `">`
 	for _, imgURL := range images {
 		msg += `<br/><img width="250" src="` + imgURL + `"></img>`
 	}

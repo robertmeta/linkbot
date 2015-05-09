@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"html/template"
-	"log"
 	"os"
 	"regexp"
 	"strings"
@@ -20,34 +19,37 @@ const basicHTTPLinkPattern = `href="(https?://.*?)"`
 func handlebasicHTTPInfo(client *gumble.Client, who, url string) {
 	title := getTitle(url)
 	kind := "link"
-	msg := `<b>Link Posted</b><br/><center><a href="` + url + `">"` + title + `"</a></center>`
+	msg := `<b>Link</b><br/><center><a href="` + url + `">"` + title + `"</a></center>`
 	lowerURL := strings.ToLower(url)
 	if strings.HasSuffix(lowerURL, ".jpg") || strings.HasSuffix(lowerURL, ".jpeg") || strings.HasSuffix(lowerURL, ".png") || strings.HasSuffix(lowerURL, ".gif") {
 		kind = "image"
 		msg = `<b>Image Posted</b><br/><center><a href="` + url + `"><img width="250" src="` + url + `"></img></center></a>`
 	}
-	nopost = true
 	location := ""
 	isSong := false
 	if strings.HasSuffix(lowerURL, ".ogg") {
+		nopost = true
 		isSong = true
 		location = downloadFromUrl(url)
 		os.Rename(location, location+".ogg")
 		songQueue = append(songQueue, location+".ogg") // BUG(rm) racey
 	}
 	if strings.HasSuffix(lowerURL, ".mp3") {
+		nopost = true
 		isSong = true
 		location = downloadFromUrl(url)
 		os.Rename(location, location+".mp3")
 		songQueue = append(songQueue, location+".mp3") // BUG(rm) racey
 	}
 	if strings.HasSuffix(lowerURL, ".m4a") {
+		nopost = true
 		isSong = true
 		location = downloadFromUrl(url)
 		os.Rename(location, location+".m4a")
 		songQueue = append(songQueue, location+".m4a") // BUG(rm) racey
 	}
 	if strings.HasSuffix(lowerURL, ".flac") {
+		nopost = true
 		isSong = true
 		location = downloadFromUrl(url)
 		os.Rename(location, location+".flac")
@@ -67,11 +69,9 @@ func handlebasicHTTPInfo(client *gumble.Client, who, url string) {
 		go func() {
 			for streamLoc != "" {
 				stream.Wait()
-				log.Println("Cleaning up: ", streamLoc)
 				os.Remove(streamLoc)
 				if len(songQueue) > 0 {
 					streamLoc, songQueue = songQueue[len(songQueue)-1], songQueue[:len(songQueue)-1]
-					log.Println("Playing: ", streamLoc)
 					if err := stream.Play(streamLoc); err != nil {
 						fmt.Printf("%s\n", err)
 						os.Remove(streamLoc)

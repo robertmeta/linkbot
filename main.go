@@ -3,7 +3,6 @@ package main
 import (
 	"flag"
 	"fmt"
-	"log"
 	"os"
 	"regexp"
 	"runtime"
@@ -117,14 +116,12 @@ func textEvent(e *gumble.TextMessageEvent) {
 
 	imgurAlbumMatches := imgurAlbumPattern.FindStringSubmatch(e.Message)
 	if len(imgurAlbumMatches) == 2 {
-		log.Println(`"` + imgurAlbumMatches[1] + `"`)
 		go handleImgurAlbumLink(e.Client, e.Sender.Name, imgurAlbumMatches[1])
 		return
 	}
 
 	imgurMatches := imgurPattern.FindStringSubmatch(e.Message)
 	if len(imgurMatches) == 2 {
-		log.Println(`"` + imgurMatches[1] + `"`)
 		go handleImgurLink(e.Client, e.Sender.Name, imgurMatches[1])
 		return
 	}
@@ -136,14 +133,10 @@ func textEvent(e *gumble.TextMessageEvent) {
 	}
 }
 
-func userEvent(e *gumble.UserChangeEvent) {
-}
-
 func main() {
 	gul := gumbleutil.Listener{
 		Connect:     connectEvent,
 		TextMessage: textEvent,
-		UserChange:  userEvent,
 	}
 	gumbleutil.Main(extraInit, gul)
 }
