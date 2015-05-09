@@ -65,18 +65,21 @@ func handlebasicHTTPInfo(client *gumble.Client, who, url string) {
 			return
 		}
 		go func() {
-		TOP:
-			stream.Wait()
-			log.Println("Cleaning up: ", streamLoc)
-			os.Remove(streamLoc)
-			if len(songQueue) > 0 {
-				streamLoc, songQueue = songQueue[len(songQueue)-1], songQueue[:len(songQueue)-1]
-				log.Println("Playing: ", streamLoc)
-				if err := stream.Play(streamLoc); err != nil {
-					fmt.Printf("%s\n", err)
-					return
+			for streamLoc != "" {
+				stream.Wait()
+				log.Println("Cleaning up: ", streamLoc)
+				os.Remove(streamLoc)
+				if len(songQueue) > 0 {
+					streamLoc, songQueue = songQueue[len(songQueue)-1], songQueue[:len(songQueue)-1]
+					log.Println("Playing: ", streamLoc)
+					if err := stream.Play(streamLoc); err != nil {
+						fmt.Printf("%s\n", err)
+						os.Remove(streamLoc)
+						return
+					}
+				} else {
+					break
 				}
-				goto TOP
 			}
 		}()
 
