@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"regexp"
+	"runtime"
 	"strconv"
 	"strings"
 
@@ -23,6 +24,8 @@ var nopost bool
 var volume float32
 
 func init() {
+	runtime.GOMAXPROCS(runtime.NumCPU() * 2)
+
 	basicHTTPPattern = regexp.MustCompile(basicHTTPLinkPattern)
 	imgurPattern = regexp.MustCompile(imgurLinkPattern)
 	imgurAlbumPattern = regexp.MustCompile(imgurAlbumLinkPattern)
@@ -60,14 +63,34 @@ func textEvent(e *gumble.TextMessageEvent) {
 	}
 	if strings.ToLower(e.Message) == "stop" {
 		if stream.IsPlaying() {
+			songQueue = []string{}
 			stream.Stop()
-			os.Remove(streamLoc)
 		}
 		return
 	}
 	if strings.ToLower(e.Message) == "mute" {
 		if stream.IsPlaying() {
 			stream.Volume = 0.0
+			sendMsg(e.Client, "Volume set to "+strconv.Itoa(int(stream.Volume*100))+"%")
+		}
+	}
+	if strings.ToLower(e.Message) == "list" {
+		msg := "<b>Upcoming Songs:</b><br/><ol>"
+		for _, v := range songQueue {
+			msg += "<li>" + v + "</li>"
+		}
+		msg += "</ol>"
+		sendMsg(e.Client, msg)
+	}
+	if strings.ToLower(e.Message) == "full" {
+		if stream.IsPlaying() {
+			stream.Volume = 1.0
+			sendMsg(e.Client, "Volume set to "+strconv.Itoa(int(stream.Volume*100))+"%")
+		}
+	}
+	if strings.ToLower(e.Message) == "next" {
+		if stream.IsPlaying() {
+			stream.Stop()
 		}
 	}
 	msgParts := strings.Split(e.Message, " ")
@@ -111,7 +134,6 @@ func textEvent(e *gumble.TextMessageEvent) {
 		go handlebasicHTTPInfo(e.Client, e.Sender.Name, basicHTTPMatches[1])
 		return
 	}
-
 }
 
 func main() {
