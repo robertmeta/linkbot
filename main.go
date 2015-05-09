@@ -136,10 +136,14 @@ func textEvent(e *gumble.TextMessageEvent) {
 	}
 }
 
+func userEvent(e *gumble.UserChangeEvent) {
+}
+
 func main() {
 	gul := gumbleutil.Listener{
 		Connect:     connectEvent,
 		TextMessage: textEvent,
+		UserChange:  userEvent,
 	}
 	gumbleutil.Main(extraInit, gul)
 }
