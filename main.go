@@ -60,6 +60,9 @@ func textEvent(e *gumble.TextMessageEvent) {
 	if e.Sender == nil {
 		return
 	}
+	if strings.Contains(strings.ToLower(e.Message), "no post") {
+		nopost = true
+	}
 	if strings.ToLower(e.Message) == "stop" {
 		if stream.IsPlaying() {
 			songQueue = []string{}
