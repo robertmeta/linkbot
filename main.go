@@ -8,7 +8,9 @@ import (
 	"runtime"
 	"strconv"
 	"strings"
+	"time"
 
+	"github.com/dustin/go-humanize"
 	"github.com/layeh/gumble/gumble"
 	"github.com/layeh/gumble/gumble_ffmpeg"
 	"github.com/layeh/gumble/gumbleutil"
@@ -21,6 +23,7 @@ var streamLoc string
 var stream *gumble_ffmpeg.Stream
 var nopost bool
 var volume float32
+var startTime time.Time
 
 func init() {
 	runtime.GOMAXPROCS(runtime.NumCPU() * 2)
@@ -49,6 +52,7 @@ func extraInit(client *gumble.Client) {
 	}
 
 	client.Attach(gumbleutil.AutoBitrate)
+	startTime = time.Now()
 }
 
 func connectEvent(e *gumble.ConnectEvent) {
@@ -62,6 +66,12 @@ func textEvent(e *gumble.TextMessageEvent) {
 	}
 	if strings.Contains(strings.ToLower(e.Message), "no post") {
 		nopost = true
+	}
+	if strings.ToLower(e.Message) == "uptime" {
+		sendMsg(e.Client, "I was last restarted "+humanize.Time(startTime))
+	}
+	if strings.Contains(strings.ToLower(e.Message), "i love you") {
+		sendMsg(e.Client, "I love you too, "+e.Sender.Name+"!")
 	}
 	if strings.ToLower(e.Message) == "stop" {
 		if stream.IsPlaying() {
