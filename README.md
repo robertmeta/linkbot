@@ -1,11 +1,6 @@
 # Linkbot
-This silly bot just posts links from the mumble chat to a subreddit, that is all.  Does minor special handling for youtube and imgur. 
-
-# TODO
-- Fix threading bugs (lots of races)
-- Add built in ducking (when bot hears audio lowers volume)
-- Extract actual information from songs in list and for playing
-- Ability to save playlist and reuse later
+This silly bot just posts links from the mumble chat to a subreddit, that is all.  Does minor special handling for youtube and imgur.  Don't expect it to be top
+quality, it is my goof around project. 
 
 # Get Linkbot
     go get -u github.com/robertmeta/linkbot
