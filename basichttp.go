@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/layeh/gumble/gumble"
+	"github.com/layeh/gumble/gumble_ffmpeg"
 )
 
 var basicHTTPPattern *regexp.Regexp
@@ -62,7 +63,8 @@ func handlebasicHTTPInfo(client *gumble.Client, who, url string) {
 		}
 		stream.Volume = 0.2
 		streamLoc, songQueue = songQueue[len(songQueue)-1], songQueue[:len(songQueue)-1]
-		if err := stream.Play(streamLoc); err != nil {
+		stream.Source = gumble_ffmpeg.SourceFile(streamLoc)
+		if err := stream.Play(); err != nil {
 			fmt.Printf("%s\n", err)
 			return
 		}
@@ -72,7 +74,8 @@ func handlebasicHTTPInfo(client *gumble.Client, who, url string) {
 				os.Remove(streamLoc)
 				if len(songQueue) > 0 {
 					streamLoc, songQueue = songQueue[len(songQueue)-1], songQueue[:len(songQueue)-1]
-					if err := stream.Play(streamLoc); err != nil {
+					stream.Source = gumble_ffmpeg.SourceFile(streamLoc)
+					if err := stream.Play(); err != nil {
 						fmt.Printf("%s\n", err)
 						os.Remove(streamLoc)
 						return

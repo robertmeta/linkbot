@@ -39,17 +39,12 @@ func init() {
 }
 
 func extraInit(client *gumble.Client) {
-	var err error
 	if redditUser == "" || redditPassword == "" || subreddit == "" {
 		flag.PrintDefaults()
 		os.Exit(1)
 	}
 
-	stream, err = gumble_ffmpeg.New(client)
-	if err != nil {
-		fmt.Printf("%s\n", err)
-		os.Exit(1)
-	}
+	stream = gumble_ffmpeg.New(client)
 
 	client.Attach(gumbleutil.AutoBitrate)
 	startTime = time.Now()
