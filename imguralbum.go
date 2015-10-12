@@ -23,7 +23,7 @@ func handleImgurAlbumLink(client *gumble.Client, who, id string) {
 	}
 	msg += `<br/>` + title + `</center></a>`
 	postLinkToReddit(client, title, "image album", who, linkURL)
-	sendMsg(client, msg)
+	sendMumbleMsg(client, msg)
 }
 
 func findImages(url string) []string {

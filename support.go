@@ -47,7 +47,7 @@ func downloadFromUrl(url string) string {
 	return file.Name()
 }
 
-func sendMsg(client *gumble.Client, msg string) {
+func sendMumbleMsg(client *gumble.Client, msg string) {
 	log.Println(msg)
 	message := gumble.TextMessage{
 		Channels: []*gumble.Channel{

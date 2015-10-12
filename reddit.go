@@ -13,7 +13,7 @@ var session *geddit.LoginSession
 
 func postLinkToReddit(client *gumble.Client, title, kind, who, link string) {
 	if nopost {
-		sendMsg(client, `link not posted to subreddit (on request)`)
+		sendMumbleMsg(client, `link not posted to subreddit (on request)`)
 		return
 	}
 	if session == nil {
@@ -34,11 +34,11 @@ func postLinkToReddit(client *gumble.Client, title, kind, who, link string) {
 	submission.Resubmit = false // DIE RESUBMIT
 	err = session.Submit(submission)
 	if err != nil && strings.Contains(err.Error(), "503") {
-		sendMsg(client, who+` reddit is overloaded at the moment, will retry in a minute.`)
+		sendMumbleMsg(client, who+` reddit is overloaded at the moment, will retry in a minute.`)
 		time.Sleep(1 * time.Minute)
 		err = session.Submit(submission)
 		if err != nil {
-			sendMsg(client, who+` I give up, stupid broken reddit.`)
+			sendMumbleMsg(client, who+` I give up, stupid broken reddit.`)
 			log.Println("FAILED TO POST: ", submission)
 			return
 		}
@@ -54,7 +54,7 @@ func setupSession(client *gumble.Client) {
 		"linkbot v1",
 	)
 	if err != nil {
-		sendMsg(client, `Reddit is overloaded at the moment, I can't even log in, will try again in a minute.`)
+		sendMumbleMsg(client, `Reddit is overloaded at the moment, I can't even log in, will try again in a minute.`)
 		time.Sleep(1 * time.Minute)
 		session, err = geddit.NewLoginSession(
 			redditUser,
@@ -62,9 +62,9 @@ func setupSession(client *gumble.Client) {
 			"linkbot v1",
 		)
 		if err != nil {
-			sendMsg(client, `Reddit is overloaded at the moment, giving up on logging in`)
+			sendMumbleMsg(client, `Reddit is overloaded at the moment, giving up on logging in`)
 		}
 	}
 
-	sendMsg(client, `Successfully logged into Reddit.`)
+	sendMumbleMsg(client, `Successfully logged into Reddit.`)
 }

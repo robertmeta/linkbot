@@ -58,7 +58,7 @@ func handlebasicHTTPInfo(client *gumble.Client, who, url string) {
 	}
 	if isSong && len(songQueue) > 0 {
 		if stream.IsPlaying() {
-			sendMsg(client, `Queued <br><center><a href="`+url+`">`+url+`</a></center>`)
+			sendMumbleMsg(client, `Queued <br><center><a href="`+url+`">`+url+`</a></center>`)
 			return
 		}
 		stream.Volume = 0.2
@@ -90,5 +90,5 @@ func handlebasicHTTPInfo(client *gumble.Client, who, url string) {
 		msg = `<b>Playing Song</b><br/><center><a href="` + url + `">` + url + `</center><br/>Type <b>stop</b> to halt song.</a>`
 	}
 	postLinkToReddit(client, title, kind, who, url)
-	sendMsg(client, msg)
+	sendMumbleMsg(client, msg)
 }
