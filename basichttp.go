@@ -91,4 +91,5 @@ func handlebasicHTTPInfo(client *gumble.Client, who, url string) {
 	}
 	postLinkToReddit(client, title, kind, who, url)
 	sendMumbleMsg(client, msg)
+	sendSlackMsg(who + " posted " + url)
 }

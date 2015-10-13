@@ -110,7 +110,6 @@ func grumbleExtraInit(client *gumble.Client) {
 		flag.PrintDefaults()
 		os.Exit(1)
 	}
-
 	stream = gumble_ffmpeg.New(client)
 
 	client.Attach(gumbleutil.AutoBitrate)

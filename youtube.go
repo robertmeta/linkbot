@@ -19,4 +19,5 @@ func handleYoutubeLink(client *gumble.Client, who, id string) {
 	msg := `<b>YouTube</b><br/><center><a href="` + linkURL + `"><img width="250" src="` + imgURL + `"></img><br/>` + title + `</center></a>`
 	postLinkToReddit(client, title, "youtube video", who, linkURL)
 	sendMumbleMsg(client, msg)
+	sendSlackMsg(who + " posted " + linkURL)
 }

@@ -30,11 +30,10 @@ func init() {
 	flag.StringVar(&redditPassword, "redditpassword", "", "the reddit user password")
 	flag.StringVar(&subreddit, "subreddit", "", "the subreddit to post to")
 	flag.StringVar(&slackChannel, "slackchannel", "", "the slack channel to read from and post to")
-	flag.StringVar(&slackKey, "slackKey", "", "the slack api key")
+	flag.StringVar(&slackKey, "slackkey", "", "the slack api key")
 }
 
 func main() {
-	sendSlackMsg()
 	gul := gumbleutil.Listener{
 		Connect:     connectEvent,
 		TextMessage: textEvent,
