@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"regexp"
 	"strconv"
 	"strings"
 	"time"
@@ -78,6 +79,11 @@ func textEvent(e *gumble.TextMessageEvent) {
 			}
 			sendMumbleMsg(e.Client, "Volume set to "+strconv.Itoa(int(stream.Volume*100))+"%")
 		}
+	}
+
+	re := regexp.MustCompile(`imgur.com/r/.+?/`)
+	if re.MatchString(e.Message) {
+		e.Message = re.ReplaceAllString(e.Message, "imgur.com/")
 	}
 
 	youtubeMatches := youtubePattern.FindStringSubmatch(e.Message)
