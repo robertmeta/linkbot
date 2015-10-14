@@ -86,9 +86,16 @@ func textEvent(e *gumble.TextMessageEvent) {
 		e.Message = re.ReplaceAllString(e.Message, "imgur.com/")
 	}
 
+	re2 := regexp.MustCompile(`.*?t=(.+?)"`)
+	timeStart := "0"
+	times := re2.FindStringSubmatch(e.Message)
+	if len(times) > 0 {
+		timeStart = times[1]
+	}
+
 	youtubeMatches := youtubePattern.FindStringSubmatch(e.Message)
 	if len(youtubeMatches) == 2 {
-		go handleYoutubeLink(e.Client, e.Sender.Name, youtubeMatches[1])
+		go handleYoutubeLink(e.Client, e.Sender.Name, youtubeMatches[1], timeStart)
 		return
 	}
 
