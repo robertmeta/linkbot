@@ -15,18 +15,35 @@ const imgurAlbumLinkPattern = `https?://(?:www|i\.)?(?:imgur\.com/)(?:a/|gallery
 
 func handleImgurAlbumLink(client *gumble.Client, who, id string) {
 	linkURL := "http://imgur.com/gallery/" + id
+	secondaryURL := "http://imgur.com/" + id + ".png"
 	title := getTitle(linkURL)
 	images := findImages(linkURL)
 	msg := `<b>Album</b><br/><center><a href="` + linkURL + `">`
-	for _, imgURL := range images {
-		msg += `<br/><img width="250" src="` + imgURL + `"></img>`
+	lastURL := ""
+	if len(images) > 0 {
+		for _, imgURL := range images {
+			if lastURL != imgURL {
+				msg += `<br/><img width="250" src="` + imgURL + `"></img>`
+				lastURL = imgURL
+			}
+		}
+	} else {
+		msg += `<br/><img width="250" src="` + secondaryURL + `"></img>`
 	}
 	msg += `<br/>` + title + `</center></a>`
 	sendSlackMsg(who + " posted gallery " + linkURL)
 	postLinkToReddit(client, title, "image album", who, linkURL)
 	sendMumbleMsg(client, msg)
-	for _, imgURL := range images {
-		sendSlackMsg(imgURL)
+	lastURL = ""
+	if len(images) > 0 {
+		for _, imgURL := range images {
+			if lastURL != imgURL {
+				sendSlackMsg(imgURL)
+				lastURL = imgURL
+			}
+		}
+	} else {
+		sendSlackMsg(secondaryURL)
 	}
 }
 
