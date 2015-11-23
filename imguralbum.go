@@ -46,10 +46,7 @@ func handleImgurAlbumLink(client *gumble.Client, who, id string, isAlbum bool) {
 	lastURL := ""
 	if len(images) > 0 {
 		for _, imgURL := range images {
-			if lastURL != imgURL {
-				msg += `<br/><img width="250" src="` + imgURL + `"></img>`
-				lastURL = imgURL
-			}
+			msg += `<br/><img width="250" src="` + imgURL + `"></img>`
 		}
 	} else {
 		msg += `<br/><img width="250" src="` + secondaryURL + `"></img>`
@@ -96,5 +93,21 @@ func findImages(url string) []string {
 			}
 		}
 	})
-	return imgs
+	return removeDuplicatesUnordered(imgs)
+}
+
+func removeDuplicatesUnordered(elements []string) []string {
+	encountered := map[string]bool{}
+
+	// Create a map of all unique elements.
+	for v := range elements {
+		encountered[elements[v]] = true
+	}
+
+	// Place all keys from the map into a slice.
+	result := []string{}
+	for key, _ := range encountered {
+		result = append(result, key)
+	}
+	return result
 }
