@@ -2,11 +2,7 @@ package main
 
 import (
 	"fmt"
-	"io"
-	"io/ioutil"
 	"log"
-	"net/http"
-	"os"
 	"strings"
 
 	"github.com/PuerkitoBio/goquery"
@@ -26,27 +22,6 @@ func getTitle(url string) string {
 	return strings.Trim(title, "\n\t ")
 }
 
-func downloadFromURL(url string) string {
-	file, err := ioutil.TempFile(os.TempDir(), "mumble")
-	defer file.Close()
-
-	response, err := http.Get(url)
-	if err != nil {
-		fmt.Println("Error while downloading", url, "-", err)
-		return ""
-	}
-	defer response.Body.Close()
-
-	n, err := io.Copy(file, response.Body)
-	if err != nil {
-		fmt.Println("Error while downloading", url, "-", err)
-		return ""
-	}
-
-	fmt.Println(n, "bytes downloaded.")
-	return file.Name()
-}
-
 func sendMumbleMsg(client *gumble.Client, msg string) {
 	log.Println(msg)
 	message := gumble.TextMessage{
@@ -55,5 +30,8 @@ func sendMumbleMsg(client *gumble.Client, msg string) {
 		},
 		Message: msg,
 	}
-	client.Send(&message)
+	err := client.Send(&message)
+	if err != nil {
+		fmt.Println("Error while sending message: ", msg, err)
+	}
 }

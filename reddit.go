@@ -12,10 +12,6 @@ import (
 var session *geddit.LoginSession
 
 func postLinkToReddit(client *gumble.Client, title, kind, who, link string) {
-	if nopost {
-		sendMumbleMsg(client, `link not posted to subreddit (on request)`)
-		return
-	}
 	if session == nil {
 		setupSession(client)
 	}

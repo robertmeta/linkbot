@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"github.com/layeh/gumble/gumble"
-	"github.com/layeh/gumble/gumble_ffmpeg"
 	"github.com/layeh/gumble/gumbleutil"
 )
 
@@ -17,9 +16,6 @@ var slackKey string
 var redditUser string
 var redditPassword string
 var subreddit string
-var streamLoc string
-var stream *gumble_ffmpeg.Stream
-var nopost bool
 var startTime time.Time
 
 func init() {
@@ -52,7 +48,6 @@ func extraInit(client *gumble.Client) {
 		flag.PrintDefaults()
 		os.Exit(1)
 	}
-	stream = gumble_ffmpeg.New(client)
 
 	client.Attach(gumbleutil.AutoBitrate)
 	startTime = time.Now()
@@ -79,12 +74,7 @@ func textEvent(e *gumble.TextMessageEvent) {
 		return
 	}
 
-	if handleSong(*e) {
-		return
-	}
-
 	if handleHTTP(*e) {
 		return
 	}
-
 }
