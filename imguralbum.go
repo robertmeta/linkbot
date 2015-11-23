@@ -13,8 +13,32 @@ var imgurAlbumPattern *regexp.Regexp
 
 const imgurAlbumLinkPattern = `https?://(?:www|i\.)?(?:imgur\.com/)(?:a/|gallery/)([[:alnum:]]+)`
 
-func handleImgurAlbumLink(client *gumble.Client, who, id string) {
+func handleImgurAlbum(e gumble.TextMessageEvent) bool {
+	isAlbum := false
+
+	re := regexp.MustCompile(`imgur.com/r/.+?/`)
+	if re.MatchString(e.Message) {
+		e.Message = re.ReplaceAllString(e.Message, "imgur.com/")
+	}
+
+	if strings.Contains(e.Message, "/a/") {
+		isAlbum = true
+	}
+
+	imgurAlbumMatches := imgurAlbumPattern.FindStringSubmatch(e.Message)
+	if len(imgurAlbumMatches) == 2 {
+		go handleImgurAlbumLink(e.Client, e.Sender.Name, imgurAlbumMatches[1], isAlbum)
+		return true
+	}
+
+	return false
+}
+
+func handleImgurAlbumLink(client *gumble.Client, who, id string, isAlbum bool) {
 	linkURL := "http://imgur.com/gallery/" + id
+	if isAlbum {
+		linkURL = "http://imgur.com/a/" + id
+	}
 	secondaryURL := "http://imgur.com/" + id + ".png"
 	title := getTitle(linkURL)
 	images := findImages(linkURL)

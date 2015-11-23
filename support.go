@@ -26,7 +26,7 @@ func getTitle(url string) string {
 	return strings.Trim(title, "\n\t ")
 }
 
-func downloadFromUrl(url string) string {
+func downloadFromURL(url string) string {
 	file, err := ioutil.TempFile(os.TempDir(), "mumble")
 	defer file.Close()
 

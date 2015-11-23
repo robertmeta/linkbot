@@ -10,6 +10,20 @@ var imgurPattern *regexp.Regexp
 
 const imgurLinkPattern = `https?://(?:www|i\.)?(?:imgur\.com/)([[:alnum:]]+)`
 
+func handleImgur(e gumble.TextMessageEvent) bool {
+	re := regexp.MustCompile(`imgur.com/r/.+?/`)
+	if re.MatchString(e.Message) {
+		e.Message = re.ReplaceAllString(e.Message, "imgur.com/")
+	}
+
+	imgurMatches := imgurPattern.FindStringSubmatch(e.Message)
+	if len(imgurMatches) == 2 {
+		go handleImgurLink(e.Client, e.Sender.Name, imgurMatches[1])
+		return true
+	}
+	return false
+}
+
 func handleImgurLink(client *gumble.Client, who, id string) {
 	linkURL := "http://imgur.com/" + id
 	imgURL := "http://i.imgur.com/" + id + "m.png"

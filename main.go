@@ -2,9 +2,12 @@ package main
 
 import (
 	"flag"
+	"fmt"
+	"os"
 	"regexp"
 	"time"
 
+	"github.com/layeh/gumble/gumble"
 	"github.com/layeh/gumble/gumble_ffmpeg"
 	"github.com/layeh/gumble/gumbleutil"
 )
@@ -17,7 +20,6 @@ var subreddit string
 var streamLoc string
 var stream *gumble_ffmpeg.Stream
 var nopost bool
-var volume float32
 var startTime time.Time
 
 func init() {
@@ -38,5 +40,51 @@ func main() {
 		Connect:     connectEvent,
 		TextMessage: textEvent,
 	}
-	gumbleutil.Main(grumbleExtraInit, gul)
+	gumbleutil.Main(extraInit, gul)
+}
+
+func connectEvent(e *gumble.ConnectEvent) {
+	fmt.Printf("linkbot loaded\n")
+}
+
+func extraInit(client *gumble.Client) {
+	if redditUser == "" || redditPassword == "" || subreddit == "" || slackKey == "" || slackChannel == "" {
+		flag.PrintDefaults()
+		os.Exit(1)
+	}
+	stream = gumble_ffmpeg.New(client)
+
+	client.Attach(gumbleutil.AutoBitrate)
+	startTime = time.Now()
+}
+
+func textEvent(e *gumble.TextMessageEvent) {
+	if e.Sender == nil {
+		return
+	}
+
+	if handleUptime(*e) {
+		return
+	}
+
+	if handleYoutube(*e) {
+		return
+	}
+
+	if handleImgurAlbum(*e) {
+		return
+	}
+
+	if handleImgur(*e) {
+		return
+	}
+
+	if handleSong(*e) {
+		return
+	}
+
+	if handleHTTP(*e) {
+		return
+	}
+
 }
