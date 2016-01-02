@@ -30,8 +30,5 @@ func sendMumbleMsg(client *gumble.Client, msg string) {
 		},
 		Message: msg,
 	}
-	err := client.Send(&message)
-	if err != nil {
-		fmt.Println("Error while sending message: ", msg, err)
-	}
+	client.Send(&message)
 }
