@@ -1,0 +1,70 @@
+{
+	"version": 0,
+	"dependencies": [
+		{
+			"importpath": "github.com/PuerkitoBio/goquery",
+			"repository": "https://github.com/PuerkitoBio/goquery",
+			"revision": "417cce822c7b9a379df5824be95228d177c5698b",
+			"branch": "master"
+		},
+		{
+			"importpath": "github.com/andybalholm/cascadia",
+			"repository": "https://github.com/andybalholm/cascadia",
+			"revision": "3ad29d1ad1c4f2023e355603324348cf1f4b2d48",
+			"branch": "master"
+		},
+		{
+			"importpath": "github.com/bluele/slack",
+			"repository": "https://github.com/bluele/slack",
+			"revision": "97c70c3d5d5d7a30e336180e1a8b4b768a9b6857",
+			"branch": "master"
+		},
+		{
+			"importpath": "github.com/dustin/go-humanize",
+			"repository": "https://github.com/dustin/go-humanize",
+			"revision": "8929fe90cee4b2cb9deb468b51fb34eba64d1bf0",
+			"branch": "master"
+		},
+		{
+			"importpath": "github.com/golang/protobuf/proto",
+			"repository": "https://github.com/golang/protobuf",
+			"revision": "68415e7123da32b07eab49c96d2c4d6158360e9b",
+			"branch": "master",
+			"path": "/proto"
+		},
+		{
+			"importpath": "github.com/google/go-querystring/query",
+			"repository": "https://github.com/google/go-querystring",
+			"revision": "2a60fc2ba6c19de80291203597d752e9ba58e4c0",
+			"branch": "master",
+			"path": "/query"
+		},
+		{
+			"importpath": "github.com/jzelinskie/geddit",
+			"repository": "https://github.com/jzelinskie/geddit",
+			"revision": "6c86147b07f886be831ae05e3acd306c5410cca9",
+			"branch": "master"
+		},
+		{
+			"importpath": "github.com/layeh/gumble/gumble",
+			"repository": "https://github.com/layeh/gumble",
+			"revision": "6f57d6a5eed502807699fe5904770154925bc023",
+			"branch": "master",
+			"path": "/gumble"
+		},
+		{
+			"importpath": "github.com/layeh/gumble/gumbleutil",
+			"repository": "https://github.com/layeh/gumble",
+			"revision": "6f57d6a5eed502807699fe5904770154925bc023",
+			"branch": "master",
+			"path": "/gumbleutil"
+		},
+		{
+			"importpath": "golang.org/x/net/html",
+			"repository": "https://go.googlesource.com/net",
+			"revision": "0cb26f788dd4625d1956c6fd97ffc4c90669d129",
+			"branch": "master",
+			"path": "/html"
+		}
+	]
+}
