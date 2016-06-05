@@ -11,7 +11,7 @@ type Channel struct {
 	ID uint32
 	// The channel's name.
 	Name string
-	// The channel's parent. Contains nil if the channel is the root channel.
+	// The channel's parent. nil if the channel is the root channel.
 	Parent *Channel
 	// The channels directly underneath the channel.
 	Children Channels
@@ -22,9 +22,13 @@ type Channel struct {
 	// The channel's description. Contains the empty string if the channel does
 	// not have a description, or if it needs to be requested.
 	Description string
-	// The channel's description hash. Contains nil if Channel.Description has
+	// The channel's description hash. nil if Channel.Description has
 	// been populated.
 	DescriptionHash []byte
+	// The maximum number of users allowed in the channel. If the value is zero,
+	// the maximum number of users per-channel is dictated by the server's
+	// "usersperchannel" setting.
+	MaxUsers uint32
 	// The position at which the channel should be displayed in an ordered list.
 	Position int32
 	// Is the channel temporary?
@@ -45,7 +49,7 @@ func (c *Channel) Add(name string, temporary bool) {
 		Name:      &name,
 		Temporary: &temporary,
 	}
-	c.client.WriteProto(&packet)
+	c.client.Conn.WriteProto(&packet)
 }
 
 // Remove will remove the given channel and all sub-channels from the server's
@@ -54,7 +58,7 @@ func (c *Channel) Remove() {
 	packet := MumbleProto.ChannelRemove{
 		ChannelId: &c.ID,
 	}
-	c.client.WriteProto(&packet)
+	c.client.Conn.WriteProto(&packet)
 }
 
 // SetName will set the name of the channel. This will have no effect if the
@@ -64,7 +68,7 @@ func (c *Channel) SetName(name string) {
 		ChannelId: &c.ID,
 		Name:      &name,
 	}
-	c.client.WriteProto(&packet)
+	c.client.Conn.WriteProto(&packet)
 }
 
 // SetDescription will set the description of the channel.
@@ -73,7 +77,25 @@ func (c *Channel) SetDescription(description string) {
 		ChannelId:   &c.ID,
 		Description: &description,
 	}
-	c.client.WriteProto(&packet)
+	c.client.Conn.WriteProto(&packet)
+}
+
+// SetPosition will set the position of the channel.
+func (c *Channel) SetPosition(position int32) {
+	packet := MumbleProto.ChannelState{
+		ChannelId: &c.ID,
+		Position:  &position,
+	}
+	c.client.Conn.WriteProto(&packet)
+}
+
+// SetMaxUsers will set the maximum number of users allowed in the channel.
+func (c *Channel) SetMaxUsers(maxUsers uint32) {
+	packet := MumbleProto.ChannelState{
+		ChannelId: &c.ID,
+		MaxUsers:  &maxUsers,
+	}
+	c.client.Conn.WriteProto(&packet)
 }
 
 // Find returns a channel whose path (by channel name) from the current channel
@@ -101,32 +123,34 @@ func (c *Channel) Find(names ...string) *Channel {
 	return nil
 }
 
-// Request requests channel information that has not yet been sent to the
-// client. The supported request types are: RequestACL, RequestDescription,
-// RequestPermission.
+// RequestDescription requests that the actual channel description
+// (i.e. non-hashed) be sent to the client.
+func (c *Channel) RequestDescription() {
+	packet := MumbleProto.RequestBlob{
+		ChannelDescription: []uint32{c.ID},
+	}
+	c.client.Conn.WriteProto(&packet)
+}
+
+// RequestACL requests that the channel's ACL to be sent to the client.
+func (c *Channel) RequestACL() {
+	packet := MumbleProto.ACL{
+		ChannelId: &c.ID,
+		Query:     proto.Bool(true),
+	}
+	c.client.Conn.WriteProto(&packet)
+}
+
+// RequestPermission requests that the channel's permission information to be
+// sent to the client.
 //
-// Note: the server will not reply to a RequestPermission request if the client
-// has up-to-date permission information.
-func (c *Channel) Request(request Request) {
-	if (request & RequestDescription) != 0 {
-		packet := MumbleProto.RequestBlob{
-			ChannelDescription: []uint32{c.ID},
-		}
-		c.client.WriteProto(&packet)
+// Note: the server will not reply to the request if the client has up-to-date
+// permission information.
+func (c *Channel) RequestPermission() {
+	packet := MumbleProto.PermissionQuery{
+		ChannelId: &c.ID,
 	}
-	if (request & RequestACL) != 0 {
-		packet := MumbleProto.ACL{
-			ChannelId: &c.ID,
-			Query:     proto.Bool(true),
-		}
-		c.client.WriteProto(&packet)
-	}
-	if (request & RequestPermission) != 0 {
-		packet := MumbleProto.PermissionQuery{
-			ChannelId: &c.ID,
-		}
-		c.client.WriteProto(&packet)
-	}
+	c.client.Conn.WriteProto(&packet)
 }
 
 // Send will send a text message to the channel.
@@ -157,7 +181,7 @@ func (c *Channel) Link(channel ...*Channel) {
 	for i, ch := range channel {
 		packet.LinksAdd[i] = ch.ID
 	}
-	c.client.WriteProto(&packet)
+	c.client.Conn.WriteProto(&packet)
 }
 
 // Unlink unlinks the given channels from the channel. If no arguments are
@@ -179,5 +203,5 @@ func (c *Channel) Unlink(channel ...*Channel) {
 			packet.LinksRemove[i] = ch.ID
 		}
 	}
-	c.client.WriteProto(&packet)
+	c.client.Conn.WriteProto(&packet)
 }

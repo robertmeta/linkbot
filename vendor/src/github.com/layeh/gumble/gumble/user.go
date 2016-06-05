@@ -34,14 +34,14 @@ type User struct {
 	// The user's comment. Contains the empty string if the user does not have a
 	// comment, or if the comment needs to be requested.
 	Comment string
-	// The user's comment hash. Contains nil if User.Comment has been populated.
+	// The user's comment hash. nil if User.Comment has been populated.
 	CommentHash []byte
 	// The hash of the user's certificate (can be empty).
 	Hash string
-	// The user's texture (avatar). Contains nil if the user does not have a
+	// The user's texture (avatar). nil if the user does not have a
 	// texture, or if the texture needs to be requested.
 	Texture []byte
-	// The user's texture hash. Contains nil if User.Texture has been populated.
+	// The user's texture hash. nil if User.Texture has been populated.
 	TextureHash []byte
 
 	// The user's stats. Containts nil if the stats have not yet been requested.
@@ -57,7 +57,7 @@ func (u *User) SetTexture(texture []byte) {
 		Session: &u.Session,
 		Texture: texture,
 	}
-	u.client.WriteProto(&packet)
+	u.client.Conn.WriteProto(&packet)
 }
 
 // SetPrioritySpeaker sets if the user is a priority speaker in the channel.
@@ -66,7 +66,7 @@ func (u *User) SetPrioritySpeaker(prioritySpeaker bool) {
 		Session:         &u.Session,
 		PrioritySpeaker: &prioritySpeaker,
 	}
-	u.client.WriteProto(&packet)
+	u.client.Conn.WriteProto(&packet)
 }
 
 // SetRecording sets if the user is recording audio.
@@ -75,7 +75,7 @@ func (u *User) SetRecording(recording bool) {
 		Session:   &u.Session,
 		Recording: &recording,
 	}
-	u.client.WriteProto(&packet)
+	u.client.Conn.WriteProto(&packet)
 }
 
 // IsRegistered returns true if the user's certificate has been registered with
@@ -91,7 +91,7 @@ func (u *User) Register() {
 		Session: &u.Session,
 		UserId:  proto.Uint32(0),
 	}
-	u.client.WriteProto(&packet)
+	u.client.Conn.WriteProto(&packet)
 }
 
 // SetComment will set the user's comment to the given string. The user's
@@ -101,7 +101,7 @@ func (u *User) SetComment(comment string) {
 		Session: &u.Session,
 		Comment: &comment,
 	}
-	u.client.WriteProto(&packet)
+	u.client.Conn.WriteProto(&packet)
 }
 
 // Move will move the user to the given channel.
@@ -110,7 +110,7 @@ func (u *User) Move(channel *Channel) {
 		Session:   &u.Session,
 		ChannelId: &channel.ID,
 	}
-	u.client.WriteProto(&packet)
+	u.client.Conn.WriteProto(&packet)
 }
 
 // Kick will kick the user from the server.
@@ -119,7 +119,7 @@ func (u *User) Kick(reason string) {
 		Session: &u.Session,
 		Reason:  &reason,
 	}
-	u.client.WriteProto(&packet)
+	u.client.Conn.WriteProto(&packet)
 }
 
 // Ban will ban the user from the server.
@@ -129,7 +129,7 @@ func (u *User) Ban(reason string) {
 		Reason:  &reason,
 		Ban:     proto.Bool(true),
 	}
-	u.client.WriteProto(&packet)
+	u.client.Conn.WriteProto(&packet)
 }
 
 // SetMuted sets whether the user can transmit audio or not.
@@ -138,7 +138,7 @@ func (u *User) SetMuted(muted bool) {
 		Session: &u.Session,
 		Mute:    &muted,
 	}
-	u.client.WriteProto(&packet)
+	u.client.Conn.WriteProto(&packet)
 }
 
 // SetSuppressed sets whether the user is suppressed by the server or not.
@@ -147,7 +147,7 @@ func (u *User) SetSuppressed(supressed bool) {
 		Session:  &u.Session,
 		Suppress: &supressed,
 	}
-	u.client.WriteProto(&packet)
+	u.client.Conn.WriteProto(&packet)
 }
 
 // SetDeafened sets whether the user can receive audio or not.
@@ -156,7 +156,7 @@ func (u *User) SetDeafened(muted bool) {
 		Session: &u.Session,
 		Deaf:    &muted,
 	}
-	u.client.WriteProto(&packet)
+	u.client.Conn.WriteProto(&packet)
 }
 
 // SetSelfMuted sets whether the user can transmit audio or not.
@@ -167,7 +167,7 @@ func (u *User) SetSelfMuted(muted bool) {
 		Session:  &u.Session,
 		SelfMute: &muted,
 	}
-	u.client.WriteProto(&packet)
+	u.client.Conn.WriteProto(&packet)
 }
 
 // SetSelfDeafened sets whether the user can receive audio or not.
@@ -178,30 +178,33 @@ func (u *User) SetSelfDeafened(muted bool) {
 		Session:  &u.Session,
 		SelfDeaf: &muted,
 	}
-	u.client.WriteProto(&packet)
+	u.client.Conn.WriteProto(&packet)
 }
 
-// Request requests user information that has not yet been sent to the client.
-// The supported request types are: RequestStats, RequestTexture, and
-// RequestComment.
-func (u *User) Request(request Request) {
-	if (request & RequestStats) != 0 {
-		packet := MumbleProto.UserStats{
-			Session: &u.Session,
-		}
-		u.client.WriteProto(&packet)
+// RequestStats requests that the user's stats be sent to the client.
+func (u *User) RequestStats() {
+	packet := MumbleProto.UserStats{
+		Session: &u.Session,
 	}
+	u.client.Conn.WriteProto(&packet)
+}
 
-	packet := MumbleProto.RequestBlob{}
-	if (request & RequestTexture) != 0 {
-		packet.SessionTexture = []uint32{u.Session}
+// RequestTexture requests that the user's actual texture (i.e. non-hashed) be
+// sent to the client.
+func (u *User) RequestTexture() {
+	packet := MumbleProto.RequestBlob{
+		SessionTexture: []uint32{u.Session},
 	}
-	if (request & RequestComment) != 0 {
-		packet.SessionComment = []uint32{u.Session}
+	u.client.Conn.WriteProto(&packet)
+}
+
+// RequestComment requests that the user's actual comment (i.e. non-hashed) be
+// sent to the client.
+func (u *User) RequestComment() {
+	packet := MumbleProto.RequestBlob{
+		SessionComment: []uint32{u.Session},
 	}
-	if packet.SessionTexture != nil || packet.SessionComment != nil {
-		u.client.WriteProto(&packet)
-	}
+	u.client.Conn.WriteProto(&packet)
 }
 
 // Send will send a text message to the user.
@@ -226,5 +229,5 @@ func (u *User) SetPlugin(context []byte, identity string) {
 		PluginContext:  context,
 		PluginIdentity: &identity,
 	}
-	u.client.WriteProto(&packet)
+	u.client.Conn.WriteProto(&packet)
 }

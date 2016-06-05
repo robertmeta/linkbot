@@ -1,5 +1,10 @@
 package gumble
 
+import (
+	"github.com/golang/protobuf/proto"
+	"github.com/layeh/gumble/gumble/MumbleProto"
+)
+
 // ACL contains a list of ACLGroups and ACLRules linked to a channel.
 type ACL struct {
 	// The channel to which the ACL belongs.
@@ -8,8 +13,51 @@ type ACL struct {
 	Groups []*ACLGroup
 	// The ACL's rules.
 	Rules []*ACLRule
-	// Does the ACL inherits the parent channel's ACL?s
+	// Does the ACL inherits the parent channel's ACLs?
 	Inherits bool
+}
+
+func (a *ACL) writeMessage(client *Client) error {
+	packet := MumbleProto.ACL{
+		ChannelId:   &a.Channel.ID,
+		Groups:      make([]*MumbleProto.ACL_ChanGroup, len(a.Groups)),
+		Acls:        make([]*MumbleProto.ACL_ChanACL, len(a.Rules)),
+		InheritAcls: &a.Inherits,
+		Query:       proto.Bool(false),
+	}
+
+	for i, group := range a.Groups {
+		packet.Groups[i] = &MumbleProto.ACL_ChanGroup{
+			Name:        &group.Name,
+			Inherit:     &group.InheritUsers,
+			Inheritable: &group.Inheritable,
+			Add:         make([]uint32, 0, len(group.UsersAdd)),
+			Remove:      make([]uint32, 0, len(group.UsersRemove)),
+		}
+		for _, user := range group.UsersAdd {
+			packet.Groups[i].Add = append(packet.Groups[i].Add, user.UserID)
+		}
+		for _, user := range group.UsersRemove {
+			packet.Groups[i].Remove = append(packet.Groups[i].Remove, user.UserID)
+		}
+	}
+
+	for i, rule := range a.Rules {
+		packet.Acls[i] = &MumbleProto.ACL_ChanACL{
+			ApplyHere: &rule.AppliesCurrent,
+			ApplySubs: &rule.AppliesChildren,
+			Grant:     proto.Uint32(uint32(rule.Granted)),
+			Deny:      proto.Uint32(uint32(rule.Denied)),
+		}
+		if rule.User != nil {
+			packet.Acls[i].UserId = &rule.User.UserID
+		}
+		if rule.Group != nil {
+			packet.Acls[i].Group = &rule.Group.Name
+		}
+	}
+
+	return client.Conn.WriteProto(&packet)
 }
 
 // ACLUser is a registered user who is part of or can be part of an ACL group
@@ -31,8 +79,10 @@ type ACLGroup struct {
 	// Are group members are inherited from the parent channel's ACL?
 	InheritUsers bool
 	// Can the group be inherited by child channels?
-	Inheritable                           bool
-	usersAdd, usersRemove, usersInherited map[uint32]*ACLUser
+	Inheritable bool
+	// The users who are explicitly added to, explicitly removed from, and
+	// inherited into the group.
+	UsersAdd, UsersRemove, UsersInherited map[uint32]*ACLUser
 }
 
 // ACL group names that are built-in.

@@ -4,7 +4,13 @@
 		{
 			"importpath": "github.com/PuerkitoBio/goquery",
 			"repository": "https://github.com/PuerkitoBio/goquery",
-			"revision": "417cce822c7b9a379df5824be95228d177c5698b",
+			"revision": "aeecb06b1e04a72e7d3312468c5b92f6bb2f3459",
+			"branch": "master"
+		},
+		{
+			"importpath": "github.com/aggrolite/geddit",
+			"repository": "https://github.com/aggrolite/geddit",
+			"revision": "d610bc5c2761d7530f5da638ff514c2876263fe1",
 			"branch": "master"
 		},
 		{
@@ -14,57 +20,76 @@
 			"branch": "master"
 		},
 		{
+			"importpath": "github.com/beefsack/go-rate",
+			"repository": "https://github.com/beefsack/go-rate",
+			"revision": "de575b104f4218f4aebdc95ba56f61f38d0dad86",
+			"branch": "master"
+		},
+		{
 			"importpath": "github.com/bluele/slack",
 			"repository": "https://github.com/bluele/slack",
-			"revision": "97c70c3d5d5d7a30e336180e1a8b4b768a9b6857",
+			"revision": "5ad82ac42481ca5de6d34e3bcb5de21c0db965c7",
 			"branch": "master"
 		},
 		{
 			"importpath": "github.com/dustin/go-humanize",
 			"repository": "https://github.com/dustin/go-humanize",
-			"revision": "8929fe90cee4b2cb9deb468b51fb34eba64d1bf0",
+			"revision": "499693e27ee0d14ffab67c31ad065fdb3d34ea75",
 			"branch": "master"
 		},
 		{
 			"importpath": "github.com/golang/protobuf/proto",
 			"repository": "https://github.com/golang/protobuf",
-			"revision": "68415e7123da32b07eab49c96d2c4d6158360e9b",
+			"revision": "3b06fc7a4cad73efce5fe6217ab6c33e7231ab4a",
 			"branch": "master",
 			"path": "/proto"
 		},
 		{
 			"importpath": "github.com/google/go-querystring/query",
 			"repository": "https://github.com/google/go-querystring",
-			"revision": "2a60fc2ba6c19de80291203597d752e9ba58e4c0",
+			"revision": "9235644dd9e52eeae6fa48efd539fdc351a0af53",
 			"branch": "master",
 			"path": "/query"
 		},
 		{
 			"importpath": "github.com/jzelinskie/geddit",
 			"repository": "https://github.com/jzelinskie/geddit",
-			"revision": "6c86147b07f886be831ae05e3acd306c5410cca9",
+			"revision": "06f309acb8eab9b2cf14acc978a2adb8311cbcae",
 			"branch": "master"
 		},
 		{
 			"importpath": "github.com/layeh/gumble/gumble",
 			"repository": "https://github.com/layeh/gumble",
-			"revision": "6f57d6a5eed502807699fe5904770154925bc023",
+			"revision": "b26208eca4b75d9efdacb068241c68912437bd69",
 			"branch": "master",
 			"path": "/gumble"
 		},
 		{
 			"importpath": "github.com/layeh/gumble/gumbleutil",
 			"repository": "https://github.com/layeh/gumble",
-			"revision": "6f57d6a5eed502807699fe5904770154925bc023",
+			"revision": "b26208eca4b75d9efdacb068241c68912437bd69",
 			"branch": "master",
 			"path": "/gumbleutil"
 		},
 		{
+			"importpath": "golang.org/x/net/context",
+			"repository": "https://go.googlesource.com/net",
+			"revision": "c4c3ea71919de159c9e246d7be66deb7f0a39a58",
+			"branch": "master",
+			"path": "/context"
+		},
+		{
 			"importpath": "golang.org/x/net/html",
 			"repository": "https://go.googlesource.com/net",
-			"revision": "0cb26f788dd4625d1956c6fd97ffc4c90669d129",
+			"revision": "c4c3ea71919de159c9e246d7be66deb7f0a39a58",
 			"branch": "master",
 			"path": "/html"
+		},
+		{
+			"importpath": "golang.org/x/oauth2",
+			"repository": "https://go.googlesource.com/oauth2",
+			"revision": "c406a4cc4ba462e5dc2f16225c5bd9488f9cbe10",
+			"branch": "master"
 		}
 	]
 }
